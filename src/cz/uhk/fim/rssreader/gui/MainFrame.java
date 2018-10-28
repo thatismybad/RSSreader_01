@@ -1,11 +1,15 @@
 package cz.uhk.fim.rssreader.gui;
 
+import cz.uhk.fim.rssreader.model.RSSItem;
+import cz.uhk.fim.rssreader.model.RSSList;
 import cz.uhk.fim.rssreader.utils.FileUtils;
+import cz.uhk.fim.rssreader.utils.RSSParser;
+import org.xml.sax.SAXException;
 
 import javax.swing.*;
+import javax.xml.parsers.ParserConfigurationException;
 import java.awt.*;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 
 public class MainFrame extends JFrame {
 
@@ -15,6 +19,7 @@ public class MainFrame extends JFrame {
 
     private JLabel lblErrorMessage;
     private JTextField txtPathField;
+    private RSSList rssList;
 
     public MainFrame() {
         init();
@@ -62,10 +67,20 @@ public class MainFrame extends JFrame {
 
         btnSave.addActionListener(e -> {
             if(validateInput()) {
+//                try {
+//                    FileUtils.saveStringToFile(txtPathField.getText(), txtContent.getText().getBytes(StandardCharsets.UTF_8));
+//                } catch (IOException e1) {
+//                    showErrorMessage(IO_SAVE_TYPE);
+//                    e1.printStackTrace();
+//                }
+
                 try {
-                    FileUtils.saveStringToFile(txtPathField.getText(), txtContent.getText().getBytes(StandardCharsets.UTF_8));
-                } catch (IOException e1) {
-                    showErrorMessage(IO_SAVE_TYPE);
+                    rssList = new RSSParser().getParsedRSS(txtPathField.getText());
+                    txtContent.setText("");
+                    for(RSSItem item : rssList.getAllItems()) {
+                        txtContent.append(String.format("%s - autor: %s%n", item.getTitle(), item.getAuthor()));
+                    }
+                } catch (IOException | SAXException | ParserConfigurationException e1) {
                     e1.printStackTrace();
                 }
             }

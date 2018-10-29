@@ -2,7 +2,6 @@ package cz.uhk.fim.rssreader.gui;
 
 import cz.uhk.fim.rssreader.model.RSSItem;
 import cz.uhk.fim.rssreader.model.RSSList;
-import cz.uhk.fim.rssreader.utils.FileUtils;
 import cz.uhk.fim.rssreader.utils.RSSParser;
 import org.xml.sax.SAXException;
 
@@ -51,40 +50,43 @@ public class MainFrame extends JFrame {
 
         add(controlPanel, BorderLayout.NORTH);
 
-        JTextArea txtContent = new JTextArea();
-        add(new JScrollPane(txtContent), BorderLayout.CENTER);
+//        JTextArea txtContent = new JTextArea();
+        JPanel content = new JPanel(new WrapLayout());
 
-        btnLoad.addActionListener(e -> {
-            if(validateInput()) {
-                try {
-                    txtContent.setText(FileUtils.loadStringFromFile(txtPathField.getText()));
-                } catch (IOException e1) {
-                    showErrorMessage(IO_LOAD_TYPE);
-                    e1.printStackTrace();
-                }
+        try {
+            rssList = new RSSParser().getParsedRSS("zive.xml");
+            for(RSSItem item : rssList.getAllItems()) {
+                content.add(new CardView(item));
             }
-        });
+        } catch (IOException | SAXException | ParserConfigurationException e1) {
+            e1.printStackTrace();
+        }
 
-        btnSave.addActionListener(e -> {
-            if(validateInput()) {
+        add(new JScrollPane(content), BorderLayout.CENTER);
+
+//        btnLoad.addActionListener(e -> {
+//            if(validateInput()) {
 //                try {
-//                    FileUtils.saveStringToFile(txtPathField.getText(), txtContent.getText().getBytes(StandardCharsets.UTF_8));
+//                    txtContent.setText(FileUtils.loadStringFromFile(txtPathField.getText()));
 //                } catch (IOException e1) {
-//                    showErrorMessage(IO_SAVE_TYPE);
+//                    showErrorMessage(IO_LOAD_TYPE);
 //                    e1.printStackTrace();
 //                }
+//            }
+//        });
 
-                try {
-                    rssList = new RSSParser().getParsedRSS(txtPathField.getText());
-                    txtContent.setText("");
-                    for(RSSItem item : rssList.getAllItems()) {
-                        txtContent.append(String.format("%s - autor: %s%n", item.getTitle(), item.getAuthor()));
-                    }
-                } catch (IOException | SAXException | ParserConfigurationException e1) {
-                    e1.printStackTrace();
-                }
-            }
-        });
+//        btnSave.addActionListener(e -> {
+//            if(validateInput()) {
+////                try {
+////                    FileUtils.saveStringToFile(txtPathField.getText(), txtContent.getText().getBytes(StandardCharsets.UTF_8));
+////                } catch (IOException e1) {
+////                    showErrorMessage(IO_SAVE_TYPE);
+////                    e1.printStackTrace();
+////                }
+//
+
+//            }
+//        });
     }
 
     private void showErrorMessage(String type) {

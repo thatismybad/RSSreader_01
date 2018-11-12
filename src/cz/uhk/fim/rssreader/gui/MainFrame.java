@@ -8,6 +8,8 @@ import org.xml.sax.SAXException;
 import javax.swing.*;
 import javax.xml.parsers.ParserConfigurationException;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.IOException;
 
 public class MainFrame extends JFrame {
@@ -50,43 +52,27 @@ public class MainFrame extends JFrame {
 
         add(controlPanel, BorderLayout.NORTH);
 
-//        JTextArea txtContent = new JTextArea();
         JPanel content = new JPanel(new WrapLayout());
 
         try {
             rssList = new RSSParser().getParsedRSS("zive.xml");
             for(RSSItem item : rssList.getAllItems()) {
-                content.add(new CardView(item));
+                CardView view = new CardView(item);
+                view.addMouseListener(new MouseAdapter() {
+                    @Override
+                    public void mouseClicked(MouseEvent e) {
+                        if(e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() == 2) {
+                            new DetailFrame(item).setVisible(true);
+                        }
+                    }
+                });
+                content.add(view);
             }
         } catch (IOException | SAXException | ParserConfigurationException e1) {
             e1.printStackTrace();
         }
 
         add(new JScrollPane(content), BorderLayout.CENTER);
-
-//        btnLoad.addActionListener(e -> {
-//            if(validateInput()) {
-//                try {
-//                    txtContent.setText(FileUtils.loadStringFromFile(txtPathField.getText()));
-//                } catch (IOException e1) {
-//                    showErrorMessage(IO_LOAD_TYPE);
-//                    e1.printStackTrace();
-//                }
-//            }
-//        });
-
-//        btnSave.addActionListener(e -> {
-//            if(validateInput()) {
-////                try {
-////                    FileUtils.saveStringToFile(txtPathField.getText(), txtContent.getText().getBytes(StandardCharsets.UTF_8));
-////                } catch (IOException e1) {
-////                    showErrorMessage(IO_SAVE_TYPE);
-////                    e1.printStackTrace();
-////                }
-//
-
-//            }
-//        });
     }
 
     private void showErrorMessage(String type) {

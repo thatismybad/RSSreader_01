@@ -11,6 +11,6 @@ Pro správné a zprovoznění projektu je možné postupovat dvěma způsoby:
 
 ### 2. Git clone
 1. vlezu do složky kam chci projekt stáhnout,
-2. napíšu do příkazové řádky: **git clone https://github.com/eiOck/RSSreader_01.git**.
+2. napíšu do příkazové řádky: **git clone https://github.com/thatismybad/RSSreader_01.git**.
 
 ![alt text](https://i.pinimg.com/236x/e8/b3/a0/e8b3a0244b14d5563b3868da15bec8f7.jpg "{!=}")
